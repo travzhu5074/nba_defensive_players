@@ -23,7 +23,6 @@ for col in features:
 df_cluster = df[features].dropna().copy()
 
 # Standardize features
-
 scaler = StandardScaler()
 scaled_values = scaler.fit_transform(df_cluster)
 
@@ -31,7 +30,7 @@ scaled_values = scaler.fit_transform(df_cluster)
 scaled_columns = [col + "_z" for col in features]
 df_cluster[scaled_columns] = scaled_values
 
-# Elbow method to determine optimal K, commented out after analysis suggested K=5 was a good choice
+# Elbow method to determine optimal K, commented out after analysis suggested K=4 was a good choice
 """
 wcss = []
 k_range = range(1, 10)
@@ -59,7 +58,6 @@ df_cluster["Cluster"] = clusters
 df.loc[df_cluster.index, "Cluster"] = clusters
 
 # Find best cluster for defensive specialists
-
 cluster_summary = df.groupby("Cluster")[["OBPM", "DBPM"]].mean()
 
 cluster_summary["def_score"] = (
@@ -74,7 +72,6 @@ print(cluster_summary)
 print("\nDefensive Specialist Cluster:", def_cluster)
 
 # List of defensive specialists in the identified cluster
-
 def_players = df[df["Cluster"] == def_cluster]
 
 print("\nDefensive Specialists:")
@@ -83,10 +80,6 @@ print(
         ["Player", "OBPM", "DBPM", "USG%", "STL%", "BLK%", "TRB%", "AST%"]
     ]
 )
-
-# ------------------------------------------------------------
-# Create Additional Cluster Metrics for Interpretation
-# ------------------------------------------------------------
 
 # Expand summary beyond OBPM/DBPM
 full_cluster_summary = df.groupby("Cluster")[features].mean()
@@ -103,7 +96,6 @@ print("\nFull Cluster Summary:")
 print(full_cluster_summary)
 
 # Cluster roles based on statistics
-
 def_cluster = full_cluster_summary["def_score"].idxmax()
 off_cluster = full_cluster_summary["net_bpm"].idxmax()
 rim_cluster = full_cluster_summary["TRB%"].idxmax()
@@ -113,11 +105,11 @@ cluster_labels = {}
 # Assign elite offense first
 cluster_labels[off_cluster] = "Elite Offensive Engines"
 
-# Assign defense (if not already assigned)
+# Assign defense
 if def_cluster not in cluster_labels:
     cluster_labels[def_cluster] = "Defensive Specialists"
 
-# Assign interior / rim protection (if not already assigned)
+# Assign interior / rim protection
 if rim_cluster not in cluster_labels:
     cluster_labels[rim_cluster] = "Rim Protectors and Interior Anchors"
 
@@ -136,7 +128,6 @@ print("\nCluster Counts:")
 print(df["Cluster_Label"].value_counts())
 
 # Visualize clusters in OBPM vs DBPM space
-
 import seaborn as sns
 plt.figure(figsize=(14, 9))
 
@@ -204,21 +195,12 @@ for cluster_id, label in cluster_labels.items():
 
     print(f"Exported {label} to: {file_path}")
 
-#ANOVA
-# ============================================================
-# ASSIGNMENT 3
-# ANOVA + Post-Hoc (Tukey HSD)
-# ============================================================
-
 import scipy.stats as stats
 import statsmodels.api as sm
 from statsmodels.formula.api import ols
 from statsmodels.stats.multicomp import pairwise_tukeyhsd
 
-# ------------------------------------------------------------
-# PART 1: ANOVA
-# ------------------------------------------------------------
-
+#ANOVA Analysis
 # Step 1: Ensure VORP is numeric and drop missing
 df["VORP"] = pd.to_numeric(df["VORP"], errors="coerce")
 
@@ -244,10 +226,7 @@ anova_table = sm.stats.anova_lm(model, typ=2)
 print("\nANOVA Table:")
 print(anova_table)
 
-# ------------------------------------------------------------
-# PART 2: Tukey HSD Post-Hoc Test
-# ------------------------------------------------------------
-
+#TUKEY post test
 tukey = pairwise_tukeyhsd(
     endog=anova_df["VORP"],
     groups=anova_df["Cluster_Label"],
@@ -258,7 +237,6 @@ print("\nFull Tukey HSD Results:")
 print(tukey)
 
 # Convert Tukey results to DataFrame for filtering
-# Convert Tukey results to DataFrame (preserve full precision)
 tukey_df = pd.DataFrame(
     data=tukey._results_table.data[1:],
     columns=tukey._results_table.data[0]
@@ -281,11 +259,7 @@ def_tukey = tukey_df[
 print("\nTukey Comparisons Involving Defensive Specialists (Full Precision):")
 print(def_tukey[["group1", "group2", "meandiff", "p-adj", "reject"]])
 
-# ============================================================
-# ASSIGNMENT 4
 # EDA: Boxplots of VORP by Archetype
-# ============================================================
-
 import seaborn as sns
 import matplotlib.pyplot as plt
 
@@ -304,7 +278,7 @@ sns.boxplot(
     y="VORP",
     data=boxplot_df,
     palette=palette,
-    showfliers=True  # ensures outliers are marked
+    showfliers=True 
 )
 
 # Formatting
