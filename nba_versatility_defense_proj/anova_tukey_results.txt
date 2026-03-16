@@ -1,0 +1,17 @@
+=== ANOVA RESULTS ===
+                       sum_sq      df           F         PR(>F)
+C(Cluster_Label)  1551.686075     3.0  490.741202  5.129875e-231
+Residual          1833.915553  1740.0         NaN            NaN
+
+=== TUKEY HSD RESULTS ===
+                             Multiple Comparison of Means - Tukey HSD, FWER=0.05                             
+=============================================================================================================
+               group1                              group2               meandiff p-adj  lower   upper  reject
+-------------------------------------------------------------------------------------------------------------
+              Defensive Specialists             Elite Offensive Engines   2.2667   0.0  2.0671  2.4663   True
+              Defensive Specialists Rim Protectors and Interior Anchors   0.4573   0.0  0.2655  0.6492   True
+              Defensive Specialists           Standard Rotation Players  -0.4381   0.0 -0.6002 -0.2759   True
+            Elite Offensive Engines Rim Protectors and Interior Anchors  -1.8094   0.0 -2.0204 -1.5984   True
+            Elite Offensive Engines           Standard Rotation Players  -2.7048   0.0 -2.8893 -2.5204   True
+Rim Protectors and Interior Anchors           Standard Rotation Players  -0.8954   0.0 -1.0714 -0.7194   True
+-------------------------------------------------------------------------------------------------------------
